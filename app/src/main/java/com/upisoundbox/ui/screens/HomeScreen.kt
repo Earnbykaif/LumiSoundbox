@@ -58,7 +58,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.upisoundbox.UpiSoundboxApp
 import com.upisoundbox.domain.model.PaymentEvent
 import com.upisoundbox.notification.NotificationAccessChecker
-import com.upisoundbox.speech.SpeechRequest
+import com.upisoundbox.domain.model.SpeechRequest
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
