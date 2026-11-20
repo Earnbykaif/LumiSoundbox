@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Lumi Soundbox</string>
+    <string name="notification_listener_label">Lumi Soundbox Payment Listener</string>
+    <string name="creator_attribution">By Kaif (@Kaif_7.0x)</string>
+</resources>
