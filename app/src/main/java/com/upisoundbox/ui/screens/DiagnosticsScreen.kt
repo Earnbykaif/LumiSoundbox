@@ -182,14 +182,14 @@ fun DiagnosticsScreen(
                             notificationKey = "test_phonepe_${System.currentTimeMillis()}",
                             postedAt = System.currentTimeMillis(),
                             title = "Payment Received",
-                            text = "You have received ₹500 from Rahul (UPI Ref: ${System.currentTimeMillis() % 1000000})"
+                            text = "You have received ₹100 from Customer (UPI Ref: ${System.currentTimeMillis() % 1000000})"
                         )
                     )
                 },
                 modifier = Modifier.weight(1f),
                 shape = MaterialTheme.shapes.small
             ) {
-                Text("PhonePe ₹500", style = MaterialTheme.typography.labelSmall)
+                Text("Test PhonePe", style = MaterialTheme.typography.labelSmall)
             }
 
             Spacer(modifier = Modifier.padding(horizontal = 4.dp))
@@ -202,14 +202,14 @@ fun DiagnosticsScreen(
                             notificationKey = "test_gpay_${System.currentTimeMillis()}",
                             postedAt = System.currentTimeMillis(),
                             title = "Google Pay",
-                            text = "Priya sent you ₹1,250.00 (UPI Ref: ${System.currentTimeMillis() % 1000000})"
+                            text = "Customer sent you ₹50.00 (UPI Ref: ${System.currentTimeMillis() % 1000000})"
                         )
                     )
                 },
                 modifier = Modifier.weight(1f),
                 shape = MaterialTheme.shapes.small
             ) {
-                Text("GPay ₹1250", style = MaterialTheme.typography.labelSmall)
+                Text("Test GPay", style = MaterialTheme.typography.labelSmall)
             }
 
             Spacer(modifier = Modifier.padding(horizontal = 4.dp))
@@ -222,14 +222,14 @@ fun DiagnosticsScreen(
                             notificationKey = "test_paytm_${System.currentTimeMillis()}",
                             postedAt = System.currentTimeMillis(),
                             title = "Payment Received",
-                            text = "Received ₹2,000 from Amit (UPI Ref: ${System.currentTimeMillis() % 1000000})"
+                            text = "Received ₹25 from Customer (UPI Ref: ${System.currentTimeMillis() % 1000000})"
                         )
                     )
                 },
                 modifier = Modifier.weight(1f),
                 shape = MaterialTheme.shapes.small
             ) {
-                Text("Paytm ₹2000", style = MaterialTheme.typography.labelSmall)
+                Text("Test Paytm", style = MaterialTheme.typography.labelSmall)
             }
         }
 

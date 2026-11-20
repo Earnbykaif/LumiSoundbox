@@ -552,7 +552,7 @@ fun SettingsScreen(
                     .padding(16.dp)
             ) {
                 Text(
-                    text = "Lumi Soundbox v1.0.0",
+                    text = "Lumi Soundbox v1.2.0",
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface

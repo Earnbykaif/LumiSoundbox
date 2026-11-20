@@ -18,6 +18,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Sensors
+import androidx.compose.material.icons.filled.VolumeUp
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -39,6 +43,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.upisoundbox.UpiSoundboxApp
@@ -68,15 +73,6 @@ fun LivePaymentScreen(
         }
     }
 
-    val amountText = latestEvent?.amountMajorFormatted ?: "₹0"
-    val payerText = latestEvent?.payerName ?: "Waiting for payment..."
-    val providerText = latestEvent?.provider?.displayName ?: "UPI Active"
-    val timeText = if (latestEvent != null) {
-        SimpleDateFormat("hh:mm a | dd MMM yyyy", Locale.getDefault()).format(Date(latestEvent.eventTime))
-    } else {
-        "Ready to announce"
-    }
-
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -90,16 +86,18 @@ fun LivePaymentScreen(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(onClick = { onNavigateBack?.invoke() }) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Back",
-                    tint = MaterialTheme.colorScheme.onBackground
-                )
+            if (onNavigateBack != null) {
+                IconButton(onClick = { onNavigateBack.invoke() }) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back",
+                        tint = MaterialTheme.colorScheme.onBackground
+                    )
+                }
+                Spacer(modifier = Modifier.width(6.dp))
             }
-            Spacer(modifier = Modifier.width(6.dp))
             Text(
-                text = "Live Payment",
+                text = "Live Soundbox Console",
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onBackground
@@ -108,164 +106,239 @@ fun LivePaymentScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Large Forest Green Container Card (Exact from Reference Mockup)
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(24.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = Color(0xFF064E3B)
-            ),
-            border = BorderStroke(1.dp, Color(0xFF10B981).copy(alpha = 0.4f)),
-            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(24.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+        if (latestEvent != null) {
+            // Live Payment Received Card
+            val timeText = SimpleDateFormat("hh:mm a | dd MMM yyyy", Locale.getDefault()).format(Date(latestEvent.eventTime))
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(24.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = Color(0xFF064E3B)
+                ),
+                border = BorderStroke(1.dp, Color(0xFF10B981).copy(alpha = 0.4f)),
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
             ) {
-                // Large Emerald Green Checkmark Circle with White Icon
-                Box(
+                Column(
                     modifier = Modifier
-                        .size(68.dp)
-                        .clip(CircleShape)
-                        .background(Color(0xFF10B981)),
-                    contentAlignment = Alignment.Center
+                        .fillMaxWidth()
+                        .padding(24.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Check,
-                        contentDescription = "Success",
-                        tint = Color.White,
-                        modifier = Modifier.size(38.dp)
-                    )
-                }
+                    Box(
+                        modifier = Modifier
+                            .size(68.dp)
+                            .clip(CircleShape)
+                            .background(Color(0xFF10B981)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Check,
+                            contentDescription = "Success",
+                            tint = Color.White,
+                            modifier = Modifier.size(38.dp)
+                        )
+                    }
 
-                Spacer(modifier = Modifier.height(14.dp))
+                    Spacer(modifier = Modifier.height(14.dp))
 
-                Text(
-                    text = "Payment Received",
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = Color(0xFFA7F3D0)
-                )
-
-                Spacer(modifier = Modifier.height(6.dp))
-
-                // Huge 54sp Bold White Amount
-                Text(
-                    text = amountText,
-                    fontSize = 54.sp,
-                    fontWeight = FontWeight.Bold,
-                    letterSpacing = (-1.5).sp,
-                    color = Color.White
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Text(
-                    text = "From",
-                    fontSize = 13.sp,
-                    color = Color(0xFF94A3B8)
-                )
-
-                Text(
-                    text = payerText,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White
-                )
-
-                Spacer(modifier = Modifier.height(4.dp))
-
-                Text(
-                    text = "via",
-                    fontSize = 13.sp,
-                    color = Color(0xFF94A3B8)
-                )
-
-                Text(
-                    text = providerText,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFF38BDF8)
-                )
-
-                Spacer(modifier = Modifier.height(10.dp))
-
-                // Timestamp Pill Chip Container (Dark Emerald #065F46)
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(Color(0xFF065F46))
-                        .padding(horizontal = 14.dp, vertical = 6.dp)
-                ) {
                     Text(
-                        text = timeText,
-                        fontSize = 12.sp,
+                        text = "Payment Received",
+                        fontSize = 15.sp,
                         fontWeight = FontWeight.Medium,
                         color = Color(0xFFA7F3D0)
                     )
-                }
 
-                Spacer(modifier = Modifier.height(24.dp))
+                    Spacer(modifier = Modifier.height(6.dp))
 
-                // Audio Waveform Visualizer
-                SoundwaveVisualizer(
-                    isPlaying = isTestActive || isSpeaking,
-                    height = 54.dp,
-                    barCount = 30
-                )
-
-                Spacer(modifier = Modifier.height(14.dp))
-
-                Text(
-                    text = if (isTestActive || isSpeaking) "Playing announcement..." else "Voice announcement ready",
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = Color(0xFF38BDF8)
-                )
-
-                Spacer(modifier = Modifier.height(20.dp))
-
-                // Test Announcement Switch
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
                     Text(
-                        text = "Test Announcement",
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Medium,
+                        text = latestEvent.amountMajorFormatted,
+                        fontSize = 52.sp,
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = (-1.5).sp,
                         color = Color.White
                     )
-                    Spacer(modifier = Modifier.width(12.dp))
-                    Switch(
-                        checked = isTestActive,
-                        onCheckedChange = { checked ->
-                            isTestActive = checked
-                            if (checked) {
-                                val testMsg = if (latestEvent != null) {
-                                    "${latestEvent.provider.displayName} पर ${latestEvent.payerName ?: "ग्राहक"} से ${latestEvent.amountMajorFormatted} प्राप्त हुए।"
-                                } else {
-                                    "लुमी साउंडबॉक्स टेस्टिंग सफल रही। गूगल पे पर पचास रुपये प्राप्त हुए।"
-                                }
-                                container.speechQueue.enqueue(
-                                    SpeechRequest(
-                                        text = testMsg,
-                                        language = "hi"
-                                    )
-                                )
-                            }
-                        },
-                        colors = SwitchDefaults.colors(
-                            checkedThumbColor = Color(0xFF10B981),
-                            checkedTrackColor = Color(0xFF065F46),
-                            uncheckedThumbColor = Color(0xFF64748B),
-                            uncheckedTrackColor = Color(0xFF1E293B)
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Text(
+                        text = "From",
+                        fontSize = 13.sp,
+                        color = Color(0xFF94A3B8)
+                    )
+
+                    Text(
+                        text = latestEvent.payerName ?: "UPI Customer",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+
+                    Spacer(modifier = Modifier.height(4.dp))
+
+                    Text(
+                        text = "via",
+                        fontSize = 13.sp,
+                        color = Color(0xFF94A3B8)
+                    )
+
+                    Text(
+                        text = latestEvent.provider.displayName,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color(0xFF38BDF8)
+                    )
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(Color(0xFF065F46))
+                            .padding(horizontal = 14.dp, vertical = 6.dp)
+                    ) {
+                        Text(
+                            text = timeText,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = Color(0xFFA7F3D0)
                         )
+                    }
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    SoundwaveVisualizer(
+                        isPlaying = isTestActive || isSpeaking,
+                        height = 54.dp,
+                        barCount = 30
+                    )
+
+                    Spacer(modifier = Modifier.height(14.dp))
+
+                    Text(
+                        text = if (isTestActive || isSpeaking) "Playing announcement..." else "Voice announcement ready",
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color(0xFF38BDF8)
                     )
                 }
             }
+        } else {
+            // Clean Standby / Ready State (Zero Fake Data)
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(24.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surface
+                ),
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)),
+                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(24.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(68.dp)
+                            .clip(CircleShape)
+                            .background(Color(0xFF064E3B)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Sensors,
+                            contentDescription = null,
+                            tint = Color(0xFF34D399),
+                            modifier = Modifier.size(36.dp)
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(14.dp))
+
+                    Text(
+                        text = "LIVE STANDBY",
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF10B981),
+                        letterSpacing = 1.sp
+                    )
+
+                    Spacer(modifier = Modifier.height(6.dp))
+
+                    Text(
+                        text = "Waiting for Payment",
+                        fontSize = 26.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Text(
+                        text = "PhonePe, Google Pay, Paytm, BHIM ya Bank SMS se jab koi payment aayega to yahan live flash aur bolkar announce hoga.",
+                        fontSize = 13.sp,
+                        textAlign = TextAlign.Center,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        lineHeight = 18.sp,
+                        modifier = Modifier.padding(horizontal = 12.dp)
+                    )
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    SoundwaveVisualizer(
+                        isPlaying = isTestActive || isSpeaking,
+                        height = 54.dp,
+                        barCount = 30
+                    )
+
+                    Spacer(modifier = Modifier.height(14.dp))
+
+                    Text(
+                        text = if (isTestActive || isSpeaking) "Playing test announcement..." else "Soundbox engine active & listening",
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = if (isTestActive || isSpeaking) Color(0xFF10B981) else MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        // Quick Test Button
+        Button(
+            onClick = {
+                isTestActive = true
+                val testMsg = if (latestEvent != null) {
+                    "${latestEvent.provider.displayName} पर ${latestEvent.payerName ?: "ग्राहक"} से ${latestEvent.amountMajorFormatted} प्राप्त हुए।"
+                } else {
+                    "लुमी साउंडबॉक्स टेस्टिंग सफल रही। गूगल पे पर पचास रुपये प्राप्त हुए।"
+                }
+                container.speechQueue.enqueue(
+                    SpeechRequest(
+                        text = testMsg,
+                        language = "hi"
+                    )
+                )
+            },
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(14.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0F766E))
+        ) {
+            Icon(
+                imageVector = Icons.Default.VolumeUp,
+                contentDescription = null,
+                tint = Color(0xFF34D399),
+                modifier = Modifier.size(20.dp)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = "🔊 Test Speaker Voice (आवाज़ चेक करें)",
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.White
+            )
         }
     }
 }

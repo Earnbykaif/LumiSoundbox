@@ -57,20 +57,19 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/v') || github.ref == 'refs/heads/main'
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v1.1.0
-          name: "Lumi Soundbox v1.1.0 (Smart UPI Voice Soundbox • By Kaif)"
+          tag_name: v1.2.0
+          name: "Lumi Soundbox v1.2.0 (Smart UPI Voice Soundbox • By Kaif)"
           body: |
-            ### 🔊 Lumi Soundbox v1.1.0 — Smart Offline UPI Voice Soundbox
+            ### 🔊 Lumi Soundbox v1.2.0 — Smart Offline UPI Voice Soundbox
             **Developed by Kaif** • Instagram: [@Kaif_7.0x](https://instagram.com/Kaif_7.0x)
 
             ---
 
-            ### 🚀 What's New & Fixed in v1.1.0:
-            - 🚫 **100% Mock Data Removed:** Zero dummy transactions (no fake ₹12,450 or Rahul Kumar mock transactions). Clean real-time zero state.
-            - 🔊 **Quick Speaker Voice Test Button:** One-tap test button right on Home & Live screens to test speaker volume & Hindi TTS instantly.
-            - 🛡️ **Play Protect Alert Fixes:** Removed obsolete broadcast receivers and sanitized root checks so sideloading runs smoothly.
-            - ⚙️ **Direct Android 13/14/15 Permission Guidance:** Built-in buttons for opening Notification Access and App Info ("Allow restricted settings").
-            - ⚡ **Instant UPI Announcements:** Automatic loud voice alerts for Google Pay, PhonePe, Paytm, BHIM, and bank SMS.
+            ### 🚀 What's New in v1.2.0:
+            - 🎯 **Dedicated Standby Mode for Live Console:** No more fake receipt cards or "₹0" receipts! Shows clean active standby mode until a real payment is captured.
+            - 🚫 **All Preview Sample Names Cleaned:** Removed sample names from Voice personas and Diagnostics screen.
+            - 🔊 **One-Tap Voice Speaker Test:** Verify soundbox audio volume and Hindi TTS instantly.
+            - 🛡️ **Zero Security Flags & Clean Background Service:** Pure offline operation.
           files: |
             app/build/outputs/apk/release/*.apk
             app/build/outputs/apk/debug/*.apk

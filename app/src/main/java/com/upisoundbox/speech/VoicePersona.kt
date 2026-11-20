@@ -19,8 +19,8 @@ enum class VoicePersona(
         defaultLanguage = "en",
         pitchMultiplier = 1.05f,
         rateMultiplier = 1.0f,
-        sampleTextEn = "Received fifty rupees from Rahul, on Google Pay.",
-        sampleTextHi = "गूगल पे पर, राहुल से पचास रुपये प्राप्त हुए।"
+        sampleTextEn = "Received fifty rupees on Google Pay.",
+        sampleTextHi = "गूगल पे पर पचास रुपये प्राप्त हुए।"
     ),
     COQUI_CRISP_SOUNDBOX(
         id = "coqui_crisp_soundbox",
@@ -41,8 +41,8 @@ enum class VoicePersona(
         defaultLanguage = "en",
         pitchMultiplier = 0.85f,
         rateMultiplier = 0.95f,
-        sampleTextEn = "Payment received. One hundred rupees from Afzal Mansuri.",
-        sampleTextHi = "भुगतान प्राप्त हुआ। अफजल मंसूरी से एक सौ रुपये।"
+        sampleTextEn = "Payment received. One hundred rupees on UPI.",
+        sampleTextHi = "भुगतान प्राप्त हुआ। एक सौ रुपये।"
     ),
     COQUI_HINDI_VYAPAR(
         id = "coqui_hindi_vyapar",
@@ -74,8 +74,8 @@ enum class VoicePersona(
         defaultLanguage = "en",
         pitchMultiplier = 0.95f,
         rateMultiplier = 0.90f,
-        sampleTextEn = "Payment received. Five hundred rupees from Rahul.",
-        sampleTextHi = "राहुल से पाँच सौ रुपये प्राप्त हुए।"
+        sampleTextEn = "Payment received. Five hundred rupees on PhonePe.",
+        sampleTextHi = "फोनपे पर पाँच सौ रुपये प्राप्त हुए।"
     ),
     ECHIDNA_MARKET_LOUDSPEAKER(
         id = "echidna_market_loudspeaker",
@@ -96,8 +96,8 @@ enum class VoicePersona(
         defaultLanguage = "en",
         pitchMultiplier = 1.05f,
         rateMultiplier = 1.02f,
-        sampleTextEn = "Payment received. Fifty rupees from Rahul on Google Pay.",
-        sampleTextHi = "गूगल पे पर, पचास रुपये रिसीव हुए।"
+        sampleTextEn = "Payment received. Fifty rupees on Google Pay.",
+        sampleTextHi = "गूगल पे पर पचास रुपये प्राप्त हुए।"
     );
 
     companion object {
