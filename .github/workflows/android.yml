@@ -57,21 +57,20 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/v') || github.ref == 'refs/heads/main'
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v1.0.0
-          name: "Lumi Soundbox v1.0.0 (Smart UPI Voice Soundbox • By Kaif)"
+          tag_name: v1.1.0
+          name: "Lumi Soundbox v1.1.0 (Smart UPI Voice Soundbox • By Kaif)"
           body: |
-            ### 🔊 Lumi Soundbox v1.0.0 — Smart Offline UPI Voice Soundbox
+            ### 🔊 Lumi Soundbox v1.1.0 — Smart Offline UPI Voice Soundbox
             **Developed by Kaif** • Instagram: [@Kaif_7.0x](https://instagram.com/Kaif_7.0x)
 
             ---
 
-            ### 🚀 Features:
-            - ⚡ **Instant UPI Announcements:** Automatic loud voice alerts for Google Pay, PhonePe, Paytm, BHIM, Cred, and bank SMS.
-            - 🔒 **100% Offline & Private:** Zero cloud dependencies, all text-to-speech runs directly on your device.
-            - 🔊 **Loudness Boost (Up to 200%):** Designed for noisy markets and shop environments.
-            - 📊 **Merchant Today Dashboard:** Real-time revenue counter and transaction history.
-            - 🎨 **10 Dynamic Themes:** Modern AMOLED Dark Navy UI with live soundwave equalizer.
-            - 🎙️ **Test Simulator:** Instant in-app test trigger to preview payment voice alerts.
+            ### 🚀 What's New & Fixed in v1.1.0:
+            - 🚫 **100% Mock Data Removed:** Zero dummy transactions (no fake ₹12,450 or Rahul Kumar mock transactions). Clean real-time zero state.
+            - 🔊 **Quick Speaker Voice Test Button:** One-tap test button right on Home & Live screens to test speaker volume & Hindi TTS instantly.
+            - 🛡️ **Play Protect Alert Fixes:** Removed obsolete broadcast receivers and sanitized root checks so sideloading runs smoothly.
+            - ⚙️ **Direct Android 13/14/15 Permission Guidance:** Built-in buttons for opening Notification Access and App Info ("Allow restricted settings").
+            - ⚡ **Instant UPI Announcements:** Automatic loud voice alerts for Google Pay, PhonePe, Paytm, BHIM, and bank SMS.
           files: |
             app/build/outputs/apk/release/*.apk
             app/build/outputs/apk/debug/*.apk

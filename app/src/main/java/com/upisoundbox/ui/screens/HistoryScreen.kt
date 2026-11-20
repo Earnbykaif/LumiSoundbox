@@ -64,7 +64,7 @@ fun HistoryScreen(modifier: Modifier = Modifier) {
     var searchQuery by rememberSaveable { mutableStateOf("") }
     var selectedFilter by rememberSaveable { mutableStateOf(HistoryFilter.ALL) }
 
-    val rawHistory = if (history.isNotEmpty()) history else getMockHistoryList()
+    val rawHistory = history
 
     val filteredHistory = remember(rawHistory, searchQuery, selectedFilter) {
         val todayStart = Calendar.getInstance().apply {
@@ -194,11 +194,24 @@ fun HistoryScreen(modifier: Modifier = Modifier) {
                     .weight(1f),
                 contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = "No transactions found",
-                    fontSize = 14.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier.padding(24.dp)
+                ) {
+                    Text(
+                        text = "No transactions found",
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = "Transactions received via UPI or SMS will automatically appear here.",
+                        fontSize = 12.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
             }
         } else {
             LazyColumn(
@@ -222,8 +235,8 @@ fun HistoryItemCard(
     modifier: Modifier = Modifier
 ) {
     val timeStr = SimpleDateFormat("dd MMM, hh:mm a", Locale.getDefault()).format(Date(event.eventTime))
-    val payerName = event.payerName ?: "Rahul Kumar"
-    val initial = payerName.firstOrNull()?.uppercase() ?: "R"
+    val payerName = event.payerName ?: "UPI Customer"
+    val initial = payerName.firstOrNull()?.uppercase() ?: "U"
 
     val avatarGradients = listOf(
         listOf(Color(0xFF8B5CF6), Color(0xFF6366F1)),
@@ -299,67 +312,4 @@ fun HistoryItemCard(
     }
 }
 
-private fun getMockHistoryList(): List<PaymentEvent> {
-    return listOf(
-        PaymentEvent(
-            id = "hist_1",
-            sourcePackage = "com.phonepe.app",
-            provider = com.upisoundbox.core.model.Provider.PHONEPE,
-            direction = com.upisoundbox.core.model.Direction.CREDIT,
-            amountMinor = 35000L,
-            currency = com.upisoundbox.core.model.Currency.INR,
-            payerName = "Rahul Kumar",
-            eventTime = System.currentTimeMillis()
-        ),
-        PaymentEvent(
-            id = "hist_2",
-            sourcePackage = "com.google.android.apps.nbu.paisa.user",
-            provider = com.upisoundbox.core.model.Provider.GOOGLE_PAY,
-            direction = com.upisoundbox.core.model.Direction.CREDIT,
-            amountMinor = 50000L,
-            currency = com.upisoundbox.core.model.Currency.INR,
-            payerName = "Priya Singh",
-            eventTime = System.currentTimeMillis() - 60000L
-        ),
-        PaymentEvent(
-            id = "hist_3",
-            sourcePackage = "net.one97.paytm",
-            provider = com.upisoundbox.core.model.Provider.PAYTM,
-            direction = com.upisoundbox.core.model.Direction.CREDIT,
-            amountMinor = 12000L,
-            currency = com.upisoundbox.core.model.Currency.INR,
-            payerName = "Aman Verma",
-            eventTime = System.currentTimeMillis() - 120000L
-        ),
-        PaymentEvent(
-            id = "hist_4",
-            sourcePackage = "com.phonepe.app",
-            provider = com.upisoundbox.core.model.Provider.PHONEPE,
-            direction = com.upisoundbox.core.model.Direction.CREDIT,
-            amountMinor = 25000L,
-            currency = com.upisoundbox.core.model.Currency.INR,
-            payerName = "Neha Sharma",
-            eventTime = System.currentTimeMillis() - 180000L
-        ),
-        PaymentEvent(
-            id = "hist_5",
-            sourcePackage = "com.google.android.apps.nbu.paisa.user",
-            provider = com.upisoundbox.core.model.Provider.GOOGLE_PAY,
-            direction = com.upisoundbox.core.model.Direction.CREDIT,
-            amountMinor = 68000L,
-            currency = com.upisoundbox.core.model.Currency.INR,
-            payerName = "Vikas Patel",
-            eventTime = System.currentTimeMillis() - 240000L
-        ),
-        PaymentEvent(
-            id = "hist_6",
-            sourcePackage = "net.one97.paytm",
-            provider = com.upisoundbox.core.model.Provider.PAYTM,
-            direction = com.upisoundbox.core.model.Direction.CREDIT,
-            amountMinor = 90000L,
-            currency = com.upisoundbox.core.model.Currency.INR,
-            payerName = "Karan Mehta",
-            eventTime = System.currentTimeMillis() - 300000L
-        )
-    )
-}
+

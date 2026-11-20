@@ -68,13 +68,13 @@ fun LivePaymentScreen(
         }
     }
 
-    val amountText = latestEvent?.amountMajorFormatted ?: "₹350"
-    val payerText = latestEvent?.payerName ?: "Rahul Kumar"
-    val providerText = latestEvent?.provider?.displayName ?: "PhonePe"
+    val amountText = latestEvent?.amountMajorFormatted ?: "₹0"
+    val payerText = latestEvent?.payerName ?: "Waiting for payment..."
+    val providerText = latestEvent?.provider?.displayName ?: "UPI Active"
     val timeText = if (latestEvent != null) {
         SimpleDateFormat("hh:mm a | dd MMM yyyy", Locale.getDefault()).format(Date(latestEvent.eventTime))
     } else {
-        "12:45 PM | 23 May 2025"
+        "Ready to announce"
     }
 
     Column(
@@ -244,9 +244,14 @@ fun LivePaymentScreen(
                         onCheckedChange = { checked ->
                             isTestActive = checked
                             if (checked) {
+                                val testMsg = if (latestEvent != null) {
+                                    "${latestEvent.provider.displayName} पर ${latestEvent.payerName ?: "ग्राहक"} से ${latestEvent.amountMajorFormatted} प्राप्त हुए।"
+                                } else {
+                                    "लुमी साउंडबॉक्स टेस्टिंग सफल रही। गूगल पे पर पचास रुपये प्राप्त हुए।"
+                                }
                                 container.speechQueue.enqueue(
                                     SpeechRequest(
-                                        text = "$providerText पर $payerText से साढ़े तीन सौ रुपये प्राप्त हुए।",
+                                        text = testMsg,
                                         language = "hi"
                                     )
                                 )

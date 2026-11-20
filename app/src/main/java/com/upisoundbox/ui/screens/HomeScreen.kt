@@ -1,7 +1,12 @@
 package com.upisoundbox.ui.screens
 
+import android.content.Intent
+import android.net.Uri
+import android.provider.Settings
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,9 +23,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Sensors
 import androidx.compose.material.icons.filled.Tune
+import androidx.compose.material.icons.filled.VolumeUp
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -42,6 +49,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
@@ -50,6 +58,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.upisoundbox.UpiSoundboxApp
 import com.upisoundbox.domain.model.PaymentEvent
 import com.upisoundbox.notification.NotificationAccessChecker
+import com.upisoundbox.speech.SpeechRequest
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -121,7 +130,7 @@ fun HomeScreen(
             IconButton(onClick = { onOpenSettings?.invoke() }) {
                 Icon(
                     imageVector = Icons.Default.Tune,
-                    contentDescription = "Tune",
+                    contentDescription = "Settings",
                     tint = MaterialTheme.colorScheme.onBackground
                 )
             }
@@ -129,7 +138,7 @@ fun HomeScreen(
 
         Spacer(modifier = Modifier.height(14.dp))
 
-        // Live Status Header Banner Card
+        // Live Status Banner Card
         Card(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(16.dp),
@@ -142,46 +151,139 @@ fun HomeScreen(
             ),
             elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
         ) {
-            Row(
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
-                verticalAlignment = Alignment.CenterVertically
+                    .padding(14.dp)
             ) {
-                Box(
-                    modifier = Modifier
-                        .size(28.dp)
-                        .clip(CircleShape)
-                        .background(if (isAccessGranted) Color(0xFF10B981) else Color(0xFFF59E0B)),
-                    contentAlignment = Alignment.Center
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Sensors,
-                        contentDescription = null,
-                        tint = Color.Black,
-                        modifier = Modifier.size(16.dp)
-                    )
+                    Box(
+                        modifier = Modifier
+                            .size(28.dp)
+                            .clip(CircleShape)
+                            .background(if (isAccessGranted) Color(0xFF10B981) else Color(0xFFF59E0B)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Sensors,
+                            contentDescription = null,
+                            tint = Color.Black,
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = if (isAccessGranted) "LIVE STATUS: ONLINE" else "ATTENTION: PERMISSION REQUIRED",
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = if (isAccessGranted) Color(0xFF34D399) else Color(0xFFFBBF24),
+                            letterSpacing = 0.5.sp
+                        )
+                        Text(
+                            text = if (isAccessGranted) "Listening for UPI payments... Active" else "Notification Access is Disabled",
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color.White
+                        )
+                    }
                 }
-                Spacer(modifier = Modifier.width(12.dp))
-                Column(modifier = Modifier.weight(1f)) {
+
+                if (!isAccessGranted) {
+                    Spacer(modifier = Modifier.height(10.dp))
                     Text(
-                        text = "LIVE STATUS",
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = if (isAccessGranted) Color(0xFF34D399) else Color(0xFFFBBF24),
-                        letterSpacing = 0.5.sp
+                        text = "PhonePe, Google Pay, Paytm aur Bank SMS se real-time sound announce karne ke liye notification access enable karein.",
+                        fontSize = 12.sp,
+                        color = Color(0xFFFDE68A),
+                        lineHeight = 16.sp
                     )
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Button(
+                            onClick = {
+                                try {
+                                    context.startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
+                                    Toast.makeText(context, "Turn on 'Lumi Soundbox' in Notification Access", Toast.LENGTH_LONG).show()
+                                } catch (e: Exception) {
+                                    Toast.makeText(context, "Cannot open settings: ${e.message}", Toast.LENGTH_SHORT).show()
+                                }
+                            },
+                            modifier = Modifier.weight(1f),
+                            shape = RoundedCornerShape(10.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFF59E0B))
+                        ) {
+                            Text("1. Enable Access", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Color.Black)
+                        }
+
+                        OutlinedButton(
+                            onClick = {
+                                try {
+                                    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                                        data = Uri.parse("package:${context.packageName}")
+                                    }
+                                    context.startActivity(intent)
+                                    Toast.makeText(context, "Tap 3-dots top right -> 'Allow restricted settings'", Toast.LENGTH_LONG).show()
+                                } catch (e: Exception) {
+                                    Toast.makeText(context, "Cannot open app info: ${e.message}", Toast.LENGTH_SHORT).show()
+                                }
+                            },
+                            modifier = Modifier.weight(1f),
+                            shape = RoundedCornerShape(10.dp),
+                            border = BorderStroke(1.dp, Color(0xFFFBBF24).copy(alpha = 0.7f))
+                        ) {
+                            Text("2. App Info", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Color(0xFFFDE68A))
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(6.dp))
                     Text(
-                        text = if (isAccessGranted) "Listening for payments... Active" else "Notification Permission Required",
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = Color.White
+                        text = "💡 Android 13/14/15: Agar option grey/disabled hai to Button 2 dabayein aur 3 dots pe click karke 'Allow restricted settings' karein.",
+                        fontSize = 11.sp,
+                        color = Color(0xFFFDE68A).copy(alpha = 0.8f),
+                        lineHeight = 14.sp
                     )
                 }
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(10.dp))
+
+        // Quick Test Voice Button
+        Button(
+            onClick = {
+                container.speechQueue.enqueue(
+                    SpeechRequest(
+                        text = "लुमी साउंडबॉक्स चालू है। गूगल पे पर पचास रुपये प्राप्त हुए।",
+                        language = "hi"
+                    )
+                )
+                Toast.makeText(context, "Testing Soundbox Voice Speaker...", Toast.LENGTH_SHORT).show()
+            },
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(12.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF065F46))
+        ) {
+            Icon(
+                imageVector = Icons.Default.VolumeUp,
+                contentDescription = null,
+                tint = Color(0xFF34D399),
+                modifier = Modifier.size(18.dp)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = "🔊 Test Soundbox Voice (Speaker Check)",
+                fontWeight = FontWeight.Bold,
+                fontSize = 13.sp,
+                color = Color.White
+            )
+        }
+
+        Spacer(modifier = Modifier.height(14.dp))
 
         // Section Title: Today's Summary
         Text(
@@ -191,24 +293,24 @@ fun HomeScreen(
             color = MaterialTheme.colorScheme.onBackground
         )
 
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
         // 2x2 Summary Grid
-        Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 // Card 1: Total Received
                 SummaryTile(
-                    value = if (metrics.totalReceivedMinor > 0) totalFormatted else "₹12,450",
+                    value = if (metrics.totalReceivedMinor > 0) totalFormatted else "₹0",
                     label = "Total Received",
                     modifier = Modifier.weight(1f)
                 )
 
                 // Card 2: Transactions
                 SummaryTile(
-                    value = if (metrics.transactionCount > 0) metrics.transactionCount.toString() else "32",
+                    value = metrics.transactionCount.toString(),
                     label = "Transactions",
                     modifier = Modifier.weight(1f)
                 )
@@ -216,25 +318,25 @@ fun HomeScreen(
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 // Card 3: Avg. Transaction
                 SummaryTile(
-                    value = if (metrics.averageTransactionMinor > 0) avgFormatted else "₹389",
+                    value = if (metrics.averageTransactionMinor > 0) avgFormatted else "₹0",
                     label = "Avg. Transaction",
                     modifier = Modifier.weight(1f)
                 )
 
-                // Card 4: UPI Providers
+                // Card 4: Soundbox Status
                 SummaryTile(
-                    value = "UPI",
-                    label = "All Providers",
+                    value = if (isAccessGranted) "Active" else "Offline",
+                    label = "Soundbox Status",
                     modifier = Modifier.weight(1f)
                 )
             }
         }
 
-        Spacer(modifier = Modifier.height(18.dp))
+        Spacer(modifier = Modifier.height(14.dp))
 
         // Section Title: Recent Payments
         Text(
@@ -246,36 +348,77 @@ fun HomeScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Recent Payments List
-        val displayPayments = if (history.isNotEmpty()) history.take(5) else getMockPayments()
-
-        LazyColumn(
-            modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            items(
-                items = displayPayments,
-                key = { it.id }
-            ) { event ->
-                RecentPaymentTile(event = event)
-            }
-
-            item {
-                Spacer(modifier = Modifier.height(6.dp))
-                OutlinedButton(
-                    onClick = { onNavigateToHistory?.invoke() },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(14.dp),
-                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.6f))
+        // Recent Payments List or Empty State
+        if (history.isEmpty()) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surface
+                ),
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.3f))
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(20.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
                 ) {
+                    Icon(
+                        imageVector = Icons.Default.Sensors,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(36.dp)
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
                     Text(
-                        text = "View All Transactions",
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.primary
+                        text = "No payments received yet",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 15.sp,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = "Payments from PhonePe, Google Pay, Paytm, BHIM or Bank SMS will automatically appear and be announced here.",
+                        fontSize = 12.sp,
+                        textAlign = TextAlign.Center,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        lineHeight = 16.sp
                     )
                 }
-                Spacer(modifier = Modifier.height(12.dp))
+            }
+        } else {
+            LazyColumn(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(
+                    items = history.take(5),
+                    key = { it.id }
+                ) { event ->
+                    RecentPaymentTile(event = event)
+                }
+
+                item {
+                    Spacer(modifier = Modifier.height(4.dp))
+                    OutlinedButton(
+                        onClick = { onNavigateToHistory?.invoke() },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(14.dp),
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.6f))
+                    ) {
+                        Text(
+                            text = "View All Transactions",
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
             }
         }
     }
@@ -297,11 +440,11 @@ fun SummaryTile(
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
         Column(
-            modifier = Modifier.padding(horizontal = 14.dp, vertical = 12.dp)
+            modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp)
         ) {
             Text(
                 text = value,
-                fontSize = 20.sp,
+                fontSize = 19.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface
             )
@@ -321,8 +464,8 @@ fun RecentPaymentTile(
     modifier: Modifier = Modifier
 ) {
     val timeStr = SimpleDateFormat("dd MMM, hh:mm a", Locale.getDefault()).format(Date(event.eventTime))
-    val payerName = event.payerName ?: "Rahul Kumar"
-    val initial = payerName.firstOrNull()?.uppercase() ?: "R"
+    val payerName = event.payerName ?: "UPI Customer"
+    val initial = payerName.firstOrNull()?.uppercase() ?: "U"
 
     val avatarGradients = listOf(
         listOf(Color(0xFF8B5CF6), Color(0xFF6366F1)),
@@ -394,49 +537,4 @@ fun RecentPaymentTile(
             }
         }
     }
-}
-
-private fun getMockPayments(): List<PaymentEvent> {
-    return listOf(
-        PaymentEvent(
-            id = "mock_1",
-            sourcePackage = "com.phonepe.app",
-            provider = com.upisoundbox.core.model.Provider.PHONEPE,
-            direction = com.upisoundbox.core.model.Direction.CREDIT,
-            amountMinor = 35000L,
-            currency = com.upisoundbox.core.model.Currency.INR,
-            payerName = "Rahul Kumar",
-            eventTime = System.currentTimeMillis()
-        ),
-        PaymentEvent(
-            id = "mock_2",
-            sourcePackage = "com.google.android.apps.nbu.paisa.user",
-            provider = com.upisoundbox.core.model.Provider.GOOGLE_PAY,
-            direction = com.upisoundbox.core.model.Direction.CREDIT,
-            amountMinor = 50000L,
-            currency = com.upisoundbox.core.model.Currency.INR,
-            payerName = "Priya Singh",
-            eventTime = System.currentTimeMillis() - 60000L
-        ),
-        PaymentEvent(
-            id = "mock_3",
-            sourcePackage = "net.one97.paytm",
-            provider = com.upisoundbox.core.model.Provider.PAYTM,
-            direction = com.upisoundbox.core.model.Direction.CREDIT,
-            amountMinor = 12000L,
-            currency = com.upisoundbox.core.model.Currency.INR,
-            payerName = "Aman Verma",
-            eventTime = System.currentTimeMillis() - 120000L
-        ),
-        PaymentEvent(
-            id = "mock_4",
-            sourcePackage = "com.phonepe.app",
-            provider = com.upisoundbox.core.model.Provider.PHONEPE,
-            direction = com.upisoundbox.core.model.Direction.CREDIT,
-            amountMinor = 25000L,
-            currency = com.upisoundbox.core.model.Currency.INR,
-            payerName = "Neha Sharma",
-            eventTime = System.currentTimeMillis() - 180000L
-        )
-    )
 }
